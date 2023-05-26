@@ -5,16 +5,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 class Hunting:
     def __init__(self):
-        self.driver_path = "seu_caminho/chromedriver.exe"
+        self.driver_path = "C:\\Users\\d.lisboa.giglioli\\Desktop\\linkedinBot-master\\bot\\chromedriver.exe"
         self.service = Service(self.driver_path)
         self.browser = webdriver.Chrome(service=self.service)
     
     def do_login(self, username, password):
         self.browser.get("https://www.linkedin.com/")
-        username_field = WebDriverWait(self.browser, 10).until(
+        username_field = WebDriverWait(self.browser, 60).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="session_key"]'))
         )
         
@@ -22,7 +23,7 @@ class Hunting:
         username_field.send_keys(username)
         password_field.send_keys(password)
         
-        login_button = WebDriverWait(self.browser, 10).until(
+        login_button = WebDriverWait(self.browser, 60).until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="main-content"]/section[1]/div/div/form/div/button'))
         )
         login_button.click()
@@ -46,17 +47,21 @@ class Hunting:
         for person in entire_results.find_elements(By.TAG_NAME, 'li'):
             buttons = person.find_elements(By.TAG_NAME, 'button')
             for button in buttons:
-                if "Conectar" in button.text:
-                    button.click()
-                    self.browser.implicitly_wait(10)
-            
-                    WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, 'artdeco-modal-outlet')))
-            
-                    # Encontrar o botão "Enviar" dentro do popup
-                    send_button = self.browser.find_element(By.XPATH, '//button[contains(@aria-label, "Enviar agora")]')
-                    send_button.click()
-                    break
-            
+                try:
+                    if "Conectar" in button.text:
+                        button.click()
+                        self.browser.implicitly_wait(10)
+
+                        WebDriverWait(self.browser, 60).until(EC.presence_of_element_located((By.ID, 'artdeco-modal-outlet')))
+
+                        # Encontrar o botão "Enviar" dentro do popup
+                        send_button = self.browser.find_element(By.XPATH, '//button[contains(@aria-label, "Enviar agora")]')
+                        send_button.click()
+                except StaleElementReferenceException:
+                    # Se ocorrer uma exceção, continue para o próximo botão
+                    continue
+
+
 
 
 
