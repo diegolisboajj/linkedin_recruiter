@@ -9,7 +9,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 class Hunting:
     def __init__(self):
-        self.driver_path = "C:\\Users\\d.lisboa.giglioli\\Desktop\\linkedinBot-master\\bot\\chromedriver.exe"
+        self.driver_path = "seu_caminho\chromedriver.exe"
         self.service = Service(self.driver_path)
         self.browser = webdriver.Chrome(service=self.service)
     
